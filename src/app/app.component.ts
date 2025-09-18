@@ -66,30 +66,34 @@ export class AppComponent {
       .catch(async () => { await navigator.clipboard.writeText(html); });
   }
 
-async correctWithGemini() {
-  const input = this.text()?.trim();
-  if (!input || this.busy()) return;
+  async correctWithGemini(instructions: string = '') {
+    const input = this.text()?.trim();
+    if (!input || this.busy()) return;
+    const instruction = (instructions ?? '').trim();
+    this.busy.set(true);
+    try {
+      const resp = await fetch('/api/correct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: input, instruction })
+      });
 
-  this.busy.set(true);
-  try {
-    const resp = await fetch('/api/correct', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ text: input })
-    });
-
-    if (!resp.ok) throw new Error('API error ' + resp.status);
-    const { corrected } = await resp.json();
-    if (typeof corrected === 'string' && corrected.trim().length > 0) {
-      this.text.set(corrected);
+      if (!resp.ok) throw new Error('API error ' + resp.status);
+      const { corrected } = await resp.json();
+      if (typeof corrected === 'string' && corrected.trim().length > 0) {
+        this.text.set(corrected);
+      }
+    } catch (e) {
+      console.error(e);
+      // necháme pôvodný text; prípadne toast/alert
+    } finally {
+      this.busy.set(false);
     }
-  } catch (e) {
-    console.error(e);
-    // necháme pôvodný text; prípadne toast/alert
-  } finally {
-    this.busy.set(false);
   }
-}
+
+  toMarkdown() {
+  }
+
 
 
 }

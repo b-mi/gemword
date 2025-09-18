@@ -1,17 +1,42 @@
-<div class="app">
-  <div class="toolbar">
-    <button (click)="pasteFromClipboard()">Vložiť zo schránky</button>
-    <button (click)="copyAsHtml()">Kopírovať ako HTML</button>
-    <button (click)="correctWithGemini()">Opraviť text</button>
+<main class="container">
+  <header class="grid">
+    <h3>Markdown editor s Gemini</h3>
+  </header>
+  <p>Pracuj s textom - vlož, oprav, alebo prerob.</p>
 
-    <span style="margin-left:auto;opacity:.7">
-      {{charCount()}} znakov • náhľad: Markdown→HTML
-    </span>
-  </div>
 
-  <textarea class="input" [ngModel]="text()" (ngModelChange)="text.set($event)"
-    placeholder="Sem píš Markdown alebo vlož text/HTML (Ctrl+V).">
-</textarea>
+  <header class="grid">
+    <button (click)="pasteFromClipboard()" data-tooltip="Prilepiť z clipboardu"><i
+        class="bi bi-clipboard-plus"></i></button>
+    <button (click)="copyAsHtml()" data-tooltip="Kopírovať ako HTML"><i class="bi bi-filetype-html"></i></button>
+    <button (click)="correctWithGemini('')" data-tooltip="Opraviť preklepy"><i class="bi bi-magic"></i></button>
+    <button data-tooltip="Prerob na Markdown"
+      (click)="correctWithGemini('Preformátuj do Markdown formátu. Nakúpené položky daj do odrážok. Dôležité časti a nakúpené položky  formátuj ako Bold')">
+      <i class="bi bi-filetype-md"></i>
+    </button>
 
-  <div class="preview" [innerHTML]="previewHtml()"></div>
-</div>
+    <label>
+      <input name="terms" type="checkbox" role="switch" />
+      abc
+    </label>
+    <label>
+      <input name="opt-in" type="checkbox" role="switch" checked />
+      def
+    </label>
+
+  </header>
+  <p></p>
+  <section class="grid">
+    <textarea [ngModel]="text()" (ngModelChange)="text.set($event)"
+      placeholder="Sem píš Markdown alebo vlož text/HTML (Ctrl+V).">
+    </textarea>
+
+    <article>
+      <div [innerHTML]="previewHtml()"></div>
+    </article>
+  </section>
+
+  <footer>
+    <small>{{charCount()}} znakov • náhľad: Markdown→HTML</small>
+  </footer>
+</main>
