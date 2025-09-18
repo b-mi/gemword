@@ -1,1 +1,18 @@
-/* You can add global styles to this file, and also import other style files */
+:root { --gap: 12px; }
+html, body { height: 100%; margin: 0; }
+.app {
+  height: 100vh; display: grid;
+  grid-template-columns: 1fr 1fr; gap: var(--gap);
+  padding: var(--gap);
+}
+.toolbar { grid-column: 1 / -1; display:flex; gap:8px; }
+textarea.input {
+  width: 100%; height: calc(100vh - 80px);
+  font: 14px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, "Roboto Mono", monospace;
+  padding: 10px; box-sizing: border-box; resize: none;
+}
+.preview {
+  height: calc(100vh - 80px); overflow: auto;
+  border: 1px solid #ddd; padding: 12px; background:#fff;
+}
+.preview p { margin: 0 0 10px; }
