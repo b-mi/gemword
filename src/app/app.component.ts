@@ -11,28 +11,12 @@ import TurndownService from 'turndown';
   standalone: true,
   selector: 'app-root',
   imports: [CommonModule, FormsModule],
-  template: `
-  <div class="app">
-    <div class="toolbar">
-      <button (click)="pasteFromClipboard()">Vložiť zo schránky</button>
-      <button (click)="copyAsHtml()">Kopírovať ako HTML</button>
-      <span style="margin-left:auto;opacity:.7">
-        {{charCount()}} znakov • náhľad: Markdown→HTML
-      </span>
-    </div>
-
-<textarea class="input"
-          [ngModel]="text()"
-          (ngModelChange)="text.set($event)"
-          placeholder="Sem píš Markdown alebo vlož text/HTML (Ctrl+V).">
-</textarea>
-
-    <div class="preview" [innerHTML]="previewHtml()"></div>
-  </div>
-  `,
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  text = signal('');
+  text = signal('ahoj jakso mas? dneska som bol v obchode a kupil som chlieb a rohliky ale predavacka bola dost neochotna a vravela ze nema vydavok. tiez som zabudol kupit mlieko co ma dost stvalo lebo deti budu chcet kakao. mozno zajtra pojdem zase do obchodu ked budem mat cas.');
+  busy = signal(false);
   private td = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
 
   charCount = signal(0);
@@ -81,5 +65,31 @@ export class AppComponent {
     await navigator.clipboard.write?.([new ClipboardItem({ 'text/html': blob })])
       .catch(async () => { await navigator.clipboard.writeText(html); });
   }
+
+async correctWithGemini() {
+  const input = this.text()?.trim();
+  if (!input || this.busy()) return;
+
+  this.busy.set(true);
+  try {
+    const resp = await fetch('/api/correct', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ text: input })
+    });
+
+    if (!resp.ok) throw new Error('API error ' + resp.status);
+    const { corrected } = await resp.json();
+    if (typeof corrected === 'string' && corrected.trim().length > 0) {
+      this.text.set(corrected);
+    }
+  } catch (e) {
+    console.error(e);
+    // necháme pôvodný text; prípadne toast/alert
+  } finally {
+    this.busy.set(false);
+  }
+}
+
 
 }
