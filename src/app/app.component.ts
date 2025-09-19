@@ -1,4 +1,4 @@
-import { Component, signal, computed, effect } from '@angular/core';
+import { Component, signal, computed, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -14,21 +14,41 @@ import TurndownService from 'turndown';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   text = signal('ahoj jakso mas? dneska som bol v obchode a kupil som chlieb a rohliky ale predavacka bola dost neochotna a vravela ze nema vydavok. tiez som zabudol kupit mlieko co ma dost stvalo lebo deti budu chcet kakao. mozno zajtra pojdem zase do obchodu ked budem mat cas.');
+  raw_text = signal('')
+  instructions = signal('');
+  moods_text = signal('');
+  moods = [
+    { name: 'Priateľský', checked: false },
+    { name: 'Profesionálny', checked: true },
+    { name: 'Veselý', checked: false },
+    { name: 'Odmeraný', checked: false },
+    { name: 'Markdown', checked: false },
+    { name: 'Stručný', checked: false },
+    { name: 'Detailný', checked: false },
+    { name: 'Vo formáte Markdown', checked: false },
+  ]
+
+
   busy = signal(false);
   private td = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
 
-  charCount = signal(0);
+
+
 
   previewHtml = computed<SafeHtml>(() => {
-    const raw = marked.parse(this.text() ?? '', { async: false }) as string; // ← dôležité
+    const raw = marked.parse(this.raw_text() ?? '', { async: false }) as string; // ← dôležité
     const clean = DOMPurify.sanitize(raw, { USE_PROFILES: { html: true } });
     return this.sanitizer.bypassSecurityTrustHtml(clean);
   });
 
   constructor(private sanitizer: DomSanitizer) {
-    effect(() => this.charCount.set((this.text ?? '').length));
+
+  }
+  
+  ngOnInit(): void {
+    this.onMoodChange();
   }
 
   async pasteFromClipboard() {
@@ -66,22 +86,37 @@ export class AppComponent {
       .catch(async () => { await navigator.clipboard.writeText(html); });
   }
 
-  async correctWithGemini(instructions: string = '') {
+  async correctWithGemini(mode: string = '') {
+
     const input = this.text()?.trim();
     if (!input || this.busy()) return;
-    const instruction = (instructions ?? '').trim();
+    const moods = this.moods_text()?.trim();
+    const instruction = this.instructions()?.trim();
+    const strs: String[] = [];
+    if( moods){
+      strs.push(moods);
+    }
+    if( instruction){
+      strs.push(instruction);
+    }
+
+    const all_istructions = strs.join('\n');
+
     this.busy.set(true);
     try {
       const resp = await fetch('/api/correct', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: input, instruction })
+        body: JSON.stringify({ text: input, instruction: all_istructions })
       });
+
+      console.log(`all_istructions: ${all_istructions}`);
+
 
       if (!resp.ok) throw new Error('API error ' + resp.status);
       const { corrected } = await resp.json();
       if (typeof corrected === 'string' && corrected.trim().length > 0) {
-        this.text.set(corrected);
+        this.raw_text.set(corrected);
       }
     } catch (e) {
       console.error(e);
@@ -93,6 +128,16 @@ export class AppComponent {
 
   toMarkdown() {
   }
+
+  onMoodChange() {
+    const moods = this.moods.filter(i => i.checked).map(i => i.name);
+    console.log(moods)
+    const txt = moods.length ? `Transformuj text tak aby bol: ${moods.join(', ')}.` : '';
+    this.moods_text.set(txt);
+
+}
+
+
 
 
 

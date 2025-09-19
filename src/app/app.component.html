@@ -1,42 +1,96 @@
 <main class="container">
   <header class="grid">
-    <h3>Markdown editor s Gemini</h3>
+    <h3>Editor textu s AI Gemini, oprava preklepov, diakritiky</h3>
   </header>
-  <p>Pracuj s textom - vlož, oprav, alebo prerob.</p>
 
-
-  <header class="grid">
-    <button (click)="pasteFromClipboard()" data-tooltip="Prilepiť z clipboardu"><i
-        class="bi bi-clipboard-plus"></i></button>
-    <button (click)="copyAsHtml()" data-tooltip="Kopírovať ako HTML"><i class="bi bi-filetype-html"></i></button>
-    <button (click)="correctWithGemini('')" data-tooltip="Opraviť preklepy"><i class="bi bi-magic"></i></button>
-    <button data-tooltip="Prerob na Markdown"
-      (click)="correctWithGemini('Preformátuj do Markdown formátu. Nakúpené položky daj do odrážok. Dôležité časti a nakúpené položky  formátuj ako Bold')">
-      <i class="bi bi-filetype-md"></i>
-    </button>
-
+  
+  <section class="button-container">
+    @for (mood of moods; track $index) {
     <label>
-      <input name="terms" type="checkbox" role="switch" />
-      abc
+      <input type="checkbox"  [(ngModel)]="mood.checked" (ngModelChange)="onMoodChange()" />
+      {{mood.name}}
     </label>
-    <label>
-      <input name="opt-in" type="checkbox" role="switch" checked />
-      def
-    </label>
-
-  </header>
+    }
+  </section>
   <p></p>
+  <!-- pole pre instrukcie -->
   <section class="grid">
+    <input type="text" [ngModel]="instructions()" (ngModelChange)="instructions.set($event)" name="text"
+      placeholder="Ďalšie Inštrukcie" aria-label="Text">
+  </section>
+
+  <section class="grid">
+    <!-- buttony nad vstupnym polom -->
+    <div class="button-container">
+      <button (click)="pasteFromClipboard()" data-tooltip="Prilepiť z clipboardu"><i
+          class="bi bi-clipboard-plus"></i></button>
+      <button (click)="correctWithGemini('')" data-tooltip="Opraviť preklepy"><i class="bi bi-magic"></i></button>
+      
+      <div class="input-label">
+        @if (busy()) {
+          <div class="input-label" aria-busy="true"></div>
+        }
+        <div class="input-label">Input</div>
+      </div>
+
+
+    </div>
+
+    <!-- buttony nad preview -->
+    <div class="button-container">
+      <button (click)="pasteFromClipboard()" data-tooltip="Prilepiť z clipboardu"><i class="bi bi-copy"></i></button>
+      <button (click)="correctWithGemini('')" data-tooltip="Opraviť preklepy"><i
+          class="bi bi-arrow-left-square"></i></button>
+      <div class="input-label">Raw</div>
+    </div>
+  </section>
+
+
+  <section class="grid" style="min-height: 400px;">
+    <!-- vstupne pole -->
     <textarea [ngModel]="text()" (ngModelChange)="text.set($event)"
       placeholder="Sem píš Markdown alebo vlož text/HTML (Ctrl+V).">
     </textarea>
 
+    <!-- preview pole -->
+    <textarea [ngModel]="raw_text()" readonly placeholder=""></textarea>
+  </section>
+
+
+  <!-- buttony -->
+  <section class="grid">
+    <!-- buttony nad vstupnym polom -->
+    <div class="button-container">
+      <div class="text-muted">
+        {{moods_text()}}
+      </div>
+
+    </div>
+
+    <!-- buttony nad preview -->
+    <div class="button-container">
+      <button (click)="pasteFromClipboard()" data-tooltip="Prilepiť z clipboardu"><i class="bi bi-copy"></i></button>
+      <div class="input-label">HTML</div>
+    </div>
+  </section>
+
+  <section class="grid">
+    <!-- vstupne pole -->
+    <div></div>
+    <!-- preview pole -->
     <article>
       <div [innerHTML]="previewHtml()"></div>
     </article>
   </section>
 
+
   <footer>
-    <small>{{charCount()}} znakov • náhľad: Markdown→HTML</small>
+    <a href="https://icons.getbootstrap.com/">Bootstrap icons</a>
+    <a href="https://picocss.com/">Picoo css</a>
+
   </footer>
 </main>
+<!-- 
+<pre>
+  {{moods | json}}
+</pre> -->

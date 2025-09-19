@@ -1,10 +1,31 @@
   :host {
 
-      .button-icon {
-          font-size: 2rem;
-          color: gray;
 
+      .button-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1em;
+          justify-content: left;
+          align-items: end;
       }
 
+      .btn {
+          justify-self: baseline;
+      }
+
+      button {
+          @extend .btn;
+      }
+
+      .input-label {
+          margin-left: auto;
+      }
+
+      .text-muted {
+          font-size: 0.875rem;
+          /* ~14px, ak je základ 16px. Môžete použiť aj 'small' */
+          color: #6c757d;
+          /* Príjemná, neutrálna sivá farba */
+      }
 
   }
