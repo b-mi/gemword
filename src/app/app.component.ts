@@ -105,22 +105,39 @@ export class AppComponent implements OnInit {
     const all_istructions = strs.join('\n');
 
     this.busy.set(true);
+    let resp: any;
     try {
-      let apiUrl = '';
-      apiUrl = `${this.service.url}/api/correct`;
-      const resp = await fetch(apiUrl, {
+
+      const apiBaseUrl = isDevMode() ? '' : this.service.url;
+
+      const apiUrl = `${apiBaseUrl}/api/correct`;
+      let isErr = false;
+      resp = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: input, instruction: all_istructions })
-      });
-
-      console.log(`all_istructions: ${all_istructions}`);
 
 
-      if (!resp.ok) throw new Error('API error ' + resp.status);
-      const { corrected } = await resp.json();
-      if (typeof corrected === 'string' && corrected.trim().length > 0) {
-        this.raw_text.set(corrected);
+      })
+        .catch((reason: any) => {
+
+          isErr = true;
+          console.log('exception', reason);
+
+
+        }).finally(() => {
+          this.busy.set(false);
+          console.log(resp);
+          
+        });
+
+      if (!isErr) {
+        console.log(`all_istructions: ${all_istructions}`);
+        if (!resp.ok) throw new Error('API error ' + resp.status);
+        const { corrected } = await resp.json();
+        if (typeof corrected === 'string' && corrected.trim().length > 0) {
+          this.raw_text.set(corrected);
+        }
       }
     } catch (e) {
       console.error(e);
