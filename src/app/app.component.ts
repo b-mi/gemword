@@ -1,10 +1,11 @@
-import { Component, signal, computed, effect, OnInit } from '@angular/core';
+import { Component, signal, computed, effect, OnInit, inject, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import TurndownService from 'turndown';
+import { AppService } from './app.service';
 
 
 @Component({
@@ -14,7 +15,8 @@ import TurndownService from 'turndown';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
+  service: AppService = inject(AppService);
   text = signal('ahoj jakso mas? dneska som bol v obchode a kupil som chlieb a rohliky ale predavacka bola dost neochotna a vravela ze nema vydavok. tiez som zabudol kupit mlieko co ma dost stvalo lebo deti budu chcet kakao. mozno zajtra pojdem zase do obchodu ked budem mat cas.');
   raw_text = signal('')
   instructions = signal('');
@@ -46,7 +48,7 @@ export class AppComponent implements OnInit{
   constructor(private sanitizer: DomSanitizer) {
 
   }
-  
+
   ngOnInit(): void {
     this.onMoodChange();
   }
@@ -93,10 +95,10 @@ export class AppComponent implements OnInit{
     const moods = this.moods_text()?.trim();
     const instruction = this.instructions()?.trim();
     const strs: String[] = [];
-    if( moods){
+    if (moods) {
       strs.push(moods);
     }
-    if( instruction){
+    if (instruction) {
       strs.push(instruction);
     }
 
@@ -104,7 +106,9 @@ export class AppComponent implements OnInit{
 
     this.busy.set(true);
     try {
-      const resp = await fetch('/api/correct', {
+      let apiUrl = '';
+      apiUrl = `${this.service.url}/api/correct`;
+      const resp = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: input, instruction: all_istructions })
@@ -135,7 +139,7 @@ export class AppComponent implements OnInit{
     const txt = moods.length ? `Transformuj text tak aby bol: ${moods.join(', ')}.` : '';
     this.moods_text.set(txt);
 
-}
+  }
 
 
 

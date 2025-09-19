@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://localhost/gemword_proxy",
+    "target": "https://localhost/gemword_proxy",
     "secure": false,
     "changeOrigin": true
   }
