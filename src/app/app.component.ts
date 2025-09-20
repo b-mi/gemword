@@ -22,15 +22,30 @@ export class AppComponent implements OnInit {
   instructions = signal('');
   moods_text = signal('');
   moods = [
-    { name: 'Priateľský', checked: false },
-    { name: 'Profesionálny', checked: true },
-    { name: 'Veselý', checked: false },
-    { name: 'Odmeraný', checked: false },
-    { name: 'Markdown', checked: false },
-    { name: 'Stručný', checked: false },
-    { name: 'Detailný', checked: false },
-    { name: 'Vo formáte Markdown', checked: false },
+    { name: 'Profesionálny', checked: true, prompt: 'Použi neutrálny, formálny a profesionálny štýl.', col: 1 },
+    { name: 'Priateľský', checked: false, prompt: 'Použi priateľský, hovorový tón.', col: 1 },
+    { name: 'Veselý', checked: false, prompt: 'Použi veselý a pozitívny tón, pridaj ľahkosť do textu.', col: 1 },
+    { name: 'Odmeraný', checked: false, prompt: 'Použi strohý, faktický tón bez emócií.', col: 1 },
+    
+    
+    
+    { name: 'Stručný', checked: false, prompt: 'Zjednoduš a skráť vety, vyjadruj sa čo najstručnejšie.', col: 2 },
+    { name: 'Detailný', checked: false, prompt: 'Rozviň text, doplň detaily a vysvetlenia.', col: 2 },
+    { name: 'Zhrnutie', checked: false, prompt: 'Zhrň text do maximálne 3 viet.', col: 2 },
+    { name: 'Bullet list', checked: false, prompt: 'Rozdeľ obsah do odrážok pre lepšiu čitateľnosť.', col: 2 },
+    { name: 'Odseky', checked: false, prompt: 'Rozdeľ text do prehľadných odsekov.', col: 2 },
+    
+    { name: 'Email', checked: false, prompt: 'Premeň text na formálny e-mail vhodný na odoslanie.', col: 3 },
+    { name: 'SMS', checked: false, prompt: 'Premeň text na krátku SMS správu, údernú a bez omáčok.', col: 3 },
+    { name: 'Kreatívny', checked: false, prompt: 'Preformuluj text do tvorivého štýlu: používaj expresívne a obrazné vyjadrenia, pridaj hravosť a originalitu.', col: 3 },
+
+    { name: 'Md - zachovať', checked: false, prompt: 'Zachovaj pôvodné Markdown formátovanie textu bez zmien.', col: 4 },
+    { name: 'Md - preformátovať', checked: false, prompt: 'Naformátuj text do čitateľného Markdownu (nadpisy, odseky, odrážky).', col: 4 },
+    { name: 'Md - odrážky', checked: false, prompt: 'Preveď dlhšie zoznamy alebo vety na Markdown bullet list.', col: 4 },
+    { name: 'Md - číslovaný zoznam', checked: false, prompt: 'Premeň kroky alebo postup na očíslovaný Markdown zoznam.', col: 4 },
+    { name: 'Md - tabuľka', checked: false, prompt: 'Preveď štruktúrované údaje do Markdown tabuľky.', col: 4 }
   ]
+
 
 
   busy = signal(false);
@@ -44,9 +59,13 @@ export class AppComponent implements OnInit {
     const clean = DOMPurify.sanitize(raw, { USE_PROFILES: { html: true } });
     return this.sanitizer.bypassSecurityTrustHtml(clean);
   });
+  cols: any[][];
 
   constructor(private sanitizer: DomSanitizer) {
-
+    this.cols = this.moods.reduce(
+      (a, m) => (a[m.col - 1].push(m), a),
+      [[], [], [], []] as any[][]
+    );
   }
 
   ngOnInit(): void {
@@ -128,11 +147,11 @@ export class AppComponent implements OnInit {
         }).finally(() => {
           this.busy.set(false);
           console.log(resp);
-          
+
         });
 
+      console.log(`all_istructions: ${all_istructions}`);
       if (!isErr) {
-        console.log(`all_istructions: ${all_istructions}`);
         if (!resp.ok) throw new Error('API error ' + resp.status);
         const { corrected } = await resp.json();
         if (typeof corrected === 'string' && corrected.trim().length > 0) {
@@ -151,9 +170,9 @@ export class AppComponent implements OnInit {
   }
 
   onMoodChange() {
-    const moods = this.moods.filter(i => i.checked).map(i => i.name);
+    const moods = this.moods.filter(i => i.checked).map(i => i.prompt);
     console.log(moods)
-    const txt = moods.length ? `Transformuj text tak aby bol: ${moods.join(', ')}.` : '';
+    const txt = moods.length ? moods.join('\n') : '';
     this.moods_text.set(txt);
 
   }

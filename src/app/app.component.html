@@ -1,18 +1,31 @@
+<header class="grid">
+  <h3>Editor textu s AI Gemini, oprava preklepov, diakritiky</h3>
+</header>
 <main class="container">
-  <header class="grid">
-    <h3>Editor textu s AI Gemini, oprava preklepov, diakritiky</h3>
-  </header>
+  <section class="grid">
+    @for (col of cols; track $index) {
 
-  
-  <section class="button-container">
+    <section class="grid">
+      <fieldset>
+        @for (item of col; track $index) {
+        <label>
+          <input type="checkbox" role="switch" [(ngModel)]="item.checked" (ngModelChange)="onMoodChange()" />
+          {{item.name}}
+        </label>
+        }
+      </fieldset>
+    </section>
+    }
+  </section>
+  <!-- <section class="button-container">
     @for (mood of moods; track $index) {
     <label>
-      <input type="checkbox"  [(ngModel)]="mood.checked" (ngModelChange)="onMoodChange()" />
+      <input type="checkbox" role="switch" [(ngModel)]="mood.checked" (ngModelChange)="onMoodChange()" />
       {{mood.name}}
     </label>
     }
-  </section>
-  <p></p>
+  </section> -->
+  <!-- <p></p> -->
   <!-- pole pre instrukcie -->
   <section class="grid">
     <input type="text" [ngModel]="instructions()" (ngModelChange)="instructions.set($event)" name="text"
@@ -25,10 +38,10 @@
       <button (click)="pasteFromClipboard()" data-tooltip="Prilepiť z clipboardu"><i
           class="bi bi-clipboard-plus"></i></button>
       <button (click)="correctWithGemini('')" data-tooltip="Opraviť preklepy"><i class="bi bi-magic"></i></button>
-      
+
       <div class="input-label">
         @if (busy()) {
-          <div class="input-label" aria-busy="true"></div>
+        <div class="input-label" aria-busy="true"></div>
         }
         <div class="input-label">Input</div>
       </div>
