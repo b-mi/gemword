@@ -1,4 +1,4 @@
-import { Component, signal, computed, effect, OnInit, inject, isDevMode } from '@angular/core';
+import { Component, signal, computed, effect, OnInit, inject, isDevMode, SecurityContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -26,15 +26,15 @@ export class AppComponent implements OnInit {
     { name: 'Priateľský', checked: false, prompt: 'Použi priateľský, hovorový tón.', col: 1 },
     { name: 'Veselý', checked: false, prompt: 'Použi veselý a pozitívny tón, pridaj ľahkosť do textu.', col: 1 },
     { name: 'Odmeraný', checked: false, prompt: 'Použi strohý, faktický tón bez emócií.', col: 1 },
-    
-    
-    
+
+
+
     { name: 'Stručný', checked: false, prompt: 'Zjednoduš a skráť vety, vyjadruj sa čo najstručnejšie.', col: 2 },
     { name: 'Detailný', checked: false, prompt: 'Rozviň text, doplň detaily a vysvetlenia.', col: 2 },
     { name: 'Zhrnutie', checked: false, prompt: 'Zhrň text do maximálne 3 viet.', col: 2 },
     { name: 'Bullet list', checked: false, prompt: 'Rozdeľ obsah do odrážok pre lepšiu čitateľnosť.', col: 2 },
     { name: 'Odseky', checked: false, prompt: 'Rozdeľ text do prehľadných odsekov.', col: 2 },
-    
+
     { name: 'Email', checked: false, prompt: 'Premeň text na formálny e-mail vhodný na odoslanie.', col: 3 },
     { name: 'SMS', checked: false, prompt: 'Premeň text na krátku SMS správu, údernú a bez omáčok.', col: 3 },
     { name: 'Kreatívny', checked: false, prompt: 'Preformuluj text do tvorivého štýlu: používaj expresívne a obrazné vyjadrenia, pridaj hravosť a originalitu.', col: 3 },
@@ -57,9 +57,13 @@ export class AppComponent implements OnInit {
   previewHtml = computed<SafeHtml>(() => {
     const raw = marked.parse(this.raw_text() ?? '', { async: false }) as string; // ← dôležité
     const clean = DOMPurify.sanitize(raw, { USE_PROFILES: { html: true } });
-    return this.sanitizer.bypassSecurityTrustHtml(clean);
+    this.cleanHtmlStr = clean;
+    this.htmlr = this.sanitizer.bypassSecurityTrustHtml(clean);
+    return this.htmlr;
   });
   cols: any[][];
+  cleanHtmlStr: string = '';
+  htmlr!: SafeHtml;
 
   constructor(private sanitizer: DomSanitizer) {
     this.cols = this.moods.reduce(
@@ -93,19 +97,32 @@ export class AppComponent implements OnInit {
     }
   }
 
-  async copyAsHtml() {
-    const raw = marked.parse(this.text() ?? '', { async: false }) as string; // ← tu
-    const clean = DOMPurify.sanitize(raw, { USE_PROFILES: { html: true } });
+  async copyAsHtml(html: string) {
 
-    // Orez na „email-safe“ HTML (tu zatiaľ len sanitácia; profil zúžime neskôr)
-    const html = `<!DOCTYPE html><html><body>${clean}</body></html>`;
+    console.log('defr', html);
 
-    // Copy as text/html
-    const blob = new Blob([html], { type: 'text/html' });
-    // @ts-ignore
-    await navigator.clipboard.write?.([new ClipboardItem({ 'text/html': blob })])
-      .catch(async () => { await navigator.clipboard.writeText(html); });
+
+    await navigator.clipboard.write([
+      new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }) })
+    ]);
   }
+
+
+  async copyAsRawText() {
+
+
+    console.log('raw', this.raw_text());
+
+
+    const text = this.raw_text() ?? '';
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        'text/plain': new Blob([text], { type: 'text/plain' })
+      })
+    ]);
+
+  }
+
 
   async correctWithGemini(mode: string = '') {
 
@@ -166,9 +183,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  toMarkdown() {
-  }
-
   onMoodChange() {
     const moods = this.moods.filter(i => i.checked).map(i => i.prompt);
     console.log(moods)
@@ -176,7 +190,6 @@ export class AppComponent implements OnInit {
     this.moods_text.set(txt);
 
   }
-
 
 
 

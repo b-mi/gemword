@@ -17,15 +17,8 @@
     </section>
     }
   </section>
-  <!-- <section class="button-container">
-    @for (mood of moods; track $index) {
-    <label>
-      <input type="checkbox" role="switch" [(ngModel)]="mood.checked" (ngModelChange)="onMoodChange()" />
-      {{mood.name}}
-    </label>
-    }
-  </section> -->
-  <!-- <p></p> -->
+
+
   <!-- pole pre instrukcie -->
   <section class="grid">
     <input type="text" [ngModel]="instructions()" (ngModelChange)="instructions.set($event)" name="text"
@@ -51,9 +44,7 @@
 
     <!-- buttony nad preview -->
     <div class="button-container">
-      <button (click)="pasteFromClipboard()" data-tooltip="Prilepiť z clipboardu"><i class="bi bi-copy"></i></button>
-      <button (click)="correctWithGemini('')" data-tooltip="Opraviť preklepy"><i
-          class="bi bi-arrow-left-square"></i></button>
+      <button (click)="copyAsRawText()" data-tooltip="Prilepiť z clipboardu"><i class="bi bi-copy"></i></button>
       <div class="input-label">Raw</div>
     </div>
   </section>
@@ -82,7 +73,7 @@
 
     <!-- buttony nad preview -->
     <div class="button-container">
-      <button (click)="pasteFromClipboard()" data-tooltip="Prilepiť z clipboardu"><i class="bi bi-copy"></i></button>
+      <button (click)="copyAsHtml(preview.innerHTML)" data-tooltip="Prilepiť z clipboardu"><i class="bi bi-copy"></i></button>
       <div class="input-label">HTML</div>
     </div>
   </section>
@@ -92,7 +83,7 @@
     <div></div>
     <!-- preview pole -->
     <article>
-      <div [innerHTML]="previewHtml()"></div>
+      <div #preview [innerHTML]="previewHtml()"></div>
     </article>
   </section>
 
