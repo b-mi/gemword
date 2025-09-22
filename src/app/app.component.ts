@@ -17,7 +17,7 @@ import { AppService } from './app.service';
 })
 export class AppComponent implements OnInit {
   service: AppService = inject(AppService);
-  text = signal('ahoj jakso mas? dneska som bol v obchode a kupil som chlieb a rohliky ale predavacka bola dost neochotna a vravela ze nema vydavok. tiez som zabudol kupit mlieko co ma dost stvalo lebo deti budu chcet kakao. mozno zajtra pojdem zase do obchodu ked budem mat cas.');
+  text = signal('');
   raw_text = signal('')
   instructions = signal('');
   moods_text = signal('');
@@ -70,6 +70,18 @@ export class AppComponent implements OnInit {
       (a, m) => (a[m.col - 1].push(m), a),
       [[], [], [], []] as any[][]
     );
+
+    const str = localStorage.getItem('data');
+    if (str) {
+      const data = JSON.parse(str);
+      this.text.set(data.text);
+      this.instructions.set(data.instructions);
+      const smoods = data.moods as any[];
+      const dct = new Map(smoods.map(s => [s.name, s.checked] as const));
+      this.moods.forEach(m => { if (dct.has(m.name)) m.checked = dct.get(m.name)!; });
+    }
+    // const data = { text: this.text(), instructions: this.instructions(), moods: this.moods };
+    // const str = JSON.stringify(data);
   }
 
   ngOnInit(): void {
@@ -174,6 +186,10 @@ export class AppComponent implements OnInit {
         if (typeof corrected === 'string' && corrected.trim().length > 0) {
           this.raw_text.set(corrected);
         }
+
+
+        this.store();
+
       }
     } catch (e) {
       console.error(e);
@@ -183,6 +199,12 @@ export class AppComponent implements OnInit {
     }
   }
 
+  private store() {
+    const data = { text: this.text(), instructions: this.instructions(), moods: this.moods };
+    const str = JSON.stringify(data);
+    localStorage.setItem('data', str);
+  }
+
   onMoodChange() {
     const moods = this.moods.filter(i => i.checked).map(i => i.prompt);
     console.log(moods)
@@ -190,6 +212,17 @@ export class AppComponent implements OnInit {
     this.moods_text.set(txt);
 
   }
+
+  clear() {
+    this.text.set('');
+    this.raw_text.set('');
+    this.moods_text.set('');
+    this.instructions.set('');
+    this.moods.forEach(m => m.checked = false);
+    this.onMoodChange();
+    this.store();
+  }
+
 
 
 
