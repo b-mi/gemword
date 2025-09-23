@@ -87,27 +87,29 @@ export class AppComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer) {
     const str = localStorage.getItem('data');
     if (str) {
-      const data = JSON.parse(str);
-      this.inputText.set(data.text);
-      this.customInstructions.set(data.instructions);
-      const smoods = data.moods as SwitchGroup[];
+      try {
+        const data = JSON.parse(str);
+        this.inputText.set(data.text);
+        this.customInstructions.set(data.instructions);
+        const smoods = data.moods as SwitchGroup[];
+        if (smoods) {
+          smoods.forEach(gTemp => {
+            gTemp.options.forEach(optTemp => {
+              if (optTemp.checked) {
 
-      smoods.forEach(gTemp => {
-        gTemp.options.forEach(optTemp => {
-          if (optTemp.checked) {
-
-            this.switchGroups.forEach(gx => {
-              if (gx.name === gTemp.name) {
-                this.onSelectionChange(gx, optTemp.value);
+                this.switchGroups.forEach(gx => {
+                  if (gx.name === gTemp.name) {
+                    this.onSelectionChange(gx, optTemp.value);
+                  }
+                });
               }
-            });
+            })
+          });
+        }
 
-
-          }
-        })
-      });
-
-
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
