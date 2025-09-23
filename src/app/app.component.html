@@ -1,86 +1,111 @@
-<header class="grid">
-  <h3>Editor textu s AI Gemini, oprava preklepov, diakritiky</h3>
-</header>
 <main class="container">
-  <section class="grid">
-    @for (col of cols; track $index) {
+  <div class="main-grid">
+    <!-- Left Column: Settings -->
+    <aside>
+      <header class="section-header">
+        <h3><i class="bi bi-sliders"></i> Nastavenia úprav</h3>
+      </header>
+      <article class="settings-card">
+        <section class="grid options-grid">
+          @for (group of switchGroups; track group.name) {
+          <div>
+            <fieldset>
+              <legend>{{ group.name }}</legend>
+              @for (option of group.options; track option.value) {
+              <label>
+                <input type="radio" [checked]="option.checked" [name]="group.name" [value]="option.value" (change)="onSelectionChange(group, option.value)">
+                {{ option.label }}
+              </label>
+              }
+            </fieldset>
+          </div>
+          }
+        </section>
 
-    <section class="grid">
-      <fieldset>
-        @for (item of col; track $index) {
-        <label>
-          <input type="checkbox" role="switch" [(ngModel)]="item.checked" (ngModelChange)="onMoodChange()" />
-          {{item.name}}
-        </label>
-        }
-      </fieldset>
+        <label for="custom-instructions">Ďalšie Inštrukcie</label>
+        <input class="cust-instr" type="text" id="custom-instructions" placeholder="napr. 'pre dieťa v 5. triede'"
+          [ngModel]="customInstructions()" (ngModelChange)="customInstructions.set($event)">
+
+      </article>
+
+      <button (click)="handleGenerate()" [attr.aria-busy]="isLoading()" class="contrast primary-action">
+        <i class="bi bi-magic"></i>
+        <span>Vylepšiť Text</span>
+      </button>
+
+      @if (error()) {
+      <article class="error-message">
+        <strong>Chyba:</strong> {{ error() }}
+      </article>
+      }
+      
+      <footer class="text-center">
+        <small>Powered by <a href="https://picocss.com" target="_blank">Pico.css</a> & <a href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a>.</small>
+      </footer>
+    </aside>
+
+    <!-- Right Column: Editor & Previews -->
+    <section>
+      <header class="section-header">
+        <h2>Editor textu s AI Gemini</h2>
+        <p>Oprava preklepov, diakritiky a štylizácia</p>
+      </header>
+      
+      <div class="grid">
+        <!-- Input -->
+        <article>
+          <div class="editor-header">
+            <span><i class="bi bi-keyboard"></i> Input</span>
+            <div class="editor-header-buttons">
+              <button class="outline secondary" (click)="handlePaste()" title="Vložiť text"><i class="bi bi-clipboard-plus"></i></button>
+              <button class="outline secondary" (click)="handleClear()" title="Vymazať text"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </div>
+          <textarea [ngModel]="inputText()" (ngModelChange)="inputText.set($event)"
+            placeholder="Vložte sem svoj text..."></textarea>
+        </article>
+
+        <!-- Raw Output -->
+        <article>
+           <div class="editor-header">
+            <span><i class="bi bi-filetype-md"></i> Raw (Markdown)</span>
+            <div class="editor-header-buttons">
+              <button class="outline secondary" (click)="copyAsRawText()" title="Kopírovať Markdown"><i class="bi bi-copy"></i></button>
+            </div>
+          </div>
+          <div class="output-container">
+            <textarea [value]="rawOutput()" readonly placeholder="Výstup v Markdown formáte..."></textarea>
+            @if (isLoading()) {
+              <div class="loading-overlay">
+                <div aria-busy="true">Generujem...</div>
+              </div>
+            }
+          </div>
+        </article>
+      </div>
+
+      <!-- HTML Preview -->
+      <article>
+        <div class="editor-header">
+           <span><i class="bi bi-filetype-html"></i> HTML Preview</span>
+          <div class="editor-header-buttons">
+            <button class="outline secondary" (click)="copyAsHtml(htmlPreview.innerHTML)" title="Kopírovať HTML"><i class="bi bi-code-slash"></i></button>
+          </div>
+        </div>
+        <div class="output-container">
+            <article #htmlPreview id="html-preview" [innerHTML]="previewHtml() || '<p class=\'text-muted\'><i>HTML náhľad sa zobrazí tu...</i></p>'"></article>
+             @if (isLoading()) {
+              <div class="loading-overlay">
+                <div aria-busy="true">Generujem...</div>
+              </div>
+            }
+        </div>
+      </article>
+
     </section>
-    }
-  </section>
-
-
-  <section class="grid">
-    <input type="text" [ngModel]="instructions()" (ngModelChange)="instructions.set($event)" name="text"
-      placeholder="Ďalšie Inštrukcie" aria-label="Text">
-  </section>
-
-  <section class="grid">
-    <div class="button-container">
-      <button (click)="pasteFromClipboard()" data-tooltip="Prilepiť z clipboardu"><i
-          class="bi bi-clipboard-plus"></i></button>
-      <button (click)="correctWithGemini()" data-tooltip="Opraviť preklepy"><i class="bi bi-magic"></i></button>
-      <button (click)="resetApp()" data-tooltip="Zmazať"><i class="bi bi-x-lg"></i></button>
-
-      <div class="input-label">
-        @if (busy()) {
-        <div class="input-label" aria-busy="true"></div>
-        }
-        <div class="input-label">Input</div>
-      </div>
-
-
-    </div>
-
-    <div class="button-container">
-      <button (click)="copyAsRawText()" data-tooltip="Kopírovať Raw Text"><i class="bi bi-copy"></i></button>
-      <div class="input-label">Raw</div>
-    </div>
-  </section>
-
-
-  <section class="grid" style="min-height: 400px;">
-    <textarea [ngModel]="text()" (ngModelChange)="text.set($event)"
-      placeholder="Sem píš Markdown alebo vlož text/HTML (Ctrl+V).">
-    </textarea>
-
-    <textarea [ngModel]="raw_text()" readonly placeholder=""></textarea>
-  </section>
-
-
-  <section class="grid">
-    <div class="button-container">
-      <div class="text-muted">
-        {{moods_text()}}
-      </div>
-
-    </div>
-
-    <div class="button-container">
-      <button (click)="copyAsHtml(preview.innerHTML)" data-tooltip="Kopírovať HTML"><i class="bi bi-code-slash"></i></button>
-      <div class="input-label">HTML</div>
-    </div>
-  </section>
-
-  <section class="grid">
-    <div></div>
-    <article>
-      <div #preview [innerHTML]="previewHtml()"></div>
-    </article>
-  </section>
-
-
-  <footer>
-    <a href="https://icons.getbootstrap.com/">Bootstrap icons</a>
-    <a href="https://picocss.com/">Picoo css</a>
-  </footer>
+  </div>
 </main>
+
+<!-- <pre>
+  {{ switchGroups | json}}
+</pre> -->
