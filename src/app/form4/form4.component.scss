@@ -1,0 +1,118 @@
+/* 1. KONTAJNER (GRID) - Tvoj pôvodný */
+.container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    grid-template-rows: 50px 1fr 1fr;
+    gap: 1px; 
+    background-color: #333333; 
+    grid-auto-flow: row;
+    grid-template-areas:
+        "options toolbar"
+        "options question"
+        "options answer";
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    color: #cccccc; 
+    font-family: sans-serif;
+}
+
+/* Spoločné nastavenie pre oblasti */
+.options, .question, .answer {
+    overflow: hidden; /* Zmena: hidden, lebo scrollujeme obsah vnútri */
+    min-height: 0;
+    /* Pridal som FLEX, aby sme mohli roztiahnuť textarea */
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- OBLASTI --- */
+.options {
+    grid-area: options;
+    background-color: #252526;
+    padding: 1.5rem;
+    gap: 1rem;
+    overflow-y: auto; /* Sidebar scroluje */
+    
+    h2 { margin: 0; color: #4dabf7; font-size: 1.2rem; }
+}
+
+.toolbar {
+    grid-area: toolbar;
+    background-color: #1e1e1e;
+    display: flex; align-items: center; padding: 0 1rem;
+    h1 { margin: 0; font-size: 1.1rem; color: #fff; }
+}
+
+.question {
+    grid-area: question;
+    background-color: #1e1e1e;
+}
+
+.answer {
+    grid-area: answer;
+    background-color: #1e1e1e;
+}
+
+/* --- VNÚTORNÝ OBSAH (NOVÉ) --- */
+
+/* Hlavičky vnútri boxov (Input/Output) */
+.box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #2d2d2d; /* Trochu iná farba pre hlavičku */
+    font-weight: bold;
+    font-size: 0.9rem;
+
+    .actions button {
+        background: transparent; border: none; cursor: pointer;
+        color: #aaa; margin-left: 0.5rem;
+        &:hover { color: #fff; }
+    }
+}
+
+/* Textarea ktorá vyplní zvyšok */
+textarea {
+    flex: 1; /* Vyplň zvyšok výšky */
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    color: #e0e0e0;
+    resize: none;
+    outline: none;
+    padding: 1rem;
+    font-family: monospace;
+    overflow-y: auto; /* Scrollbar tu */
+}
+
+/* Checkboxy v sidebare */
+.checkbox-item {
+    display: flex; align-items: center; gap: 0.8rem; padding: 0.5rem;
+    cursor: pointer; border-radius: 4px; color: #ccc;
+    &:hover { background-color: rgba(255,255,255,0.05); color: #fff; }
+    &.active { color: #4dabf7; }
+}
+
+
+
+.btn-primary {
+    margin-top: auto; padding: 0.8rem; background-color: #eee; border: none;
+    border-radius: 4px; font-weight: bold; cursor: pointer; color: #000;
+    &:hover { background-color: #fff; }
+    &:disabled { opacity: 0.6; }
+}
+.error-msg { color: #ff6b6b; font-size: 0.85rem; }
+
+/* --- MOBIL --- */
+@media (max-width: 800px) {
+    .container {
+        display: flex; flex-direction: column; height: auto; overflow: visible;
+        background-color: #1e1e1e; gap: 0;
+    }
+    .options, .question, .answer {
+        min-height: 300px; overflow: visible; border-bottom: 1px solid #333;
+    }
+    .toolbar { min-height: 60px; border-bottom: 1px solid #333; }
+}

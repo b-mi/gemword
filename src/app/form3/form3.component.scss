@@ -1,0 +1,179 @@
+// // @use '../../layout' as *;
+
+// // 1. HLAVNÝ LAYOUT
+// // .app-layout {
+// //   height: 100vh;       // Fixná výška
+// //   width: 100vw;        // Fixná šírka
+// //   background-color: #111;
+// //   color: #fff;
+// //   overflow: hidden;    // Žiadny scrollbar na hlavnom kontajneri
+
+// //   // Mobil: Flex stĺpec (scroluje sa vnútro)
+// //   @include flex(start, stretch, column); 
+
+// //   // Desktop: Flex riadok (Sidebar | Main)
+// //   @include mq(lg) {
+// //     @include flex(start, stretch, row); 
+// //   }
+// // }
+
+// // 2. SIDEBAR
+// .sidebar {
+//   background-color: #1a1a1a;
+//   border-right: 1px solid #333;
+//   padding: 1.5rem;
+//   @include flex(start, stretch, column);
+//   gap: 1.5rem;
+  
+//   // Mobil: Flexibilná výška
+//   width: 100%;
+  
+//   // Desktop: Fixná šírka, scrollovanie len tu
+//   @include mq(lg) {
+//     width: 320px;
+//     flex-shrink: 0;
+//     height: 100%;      // Plná výška rodiča
+//     overflow-y: auto;  // Scrolluje len sidebar ak treba
+//   }
+
+//   h2 { margin: 0; font-size: 1.2rem; color: #4dabf7; }
+// }
+
+// // Checkboxy
+// .settings-list {
+//   @include flex(start, stretch, column);
+//   gap: 0.5rem;
+// }
+
+// .checkbox-item {
+//   @include flex(start, center);
+//   gap: 0.8rem;
+//   cursor: pointer;
+//   padding: 0.5rem;
+//   border-radius: 6px;
+//   color: #ccc;
+//   transition: background 0.2s;
+
+//   &:hover { background-color: rgba(255,255,255,0.05); color: #fff; }
+//   &.active { background-color: rgba(77, 171, 247, 0.15); color: #4dabf7; }
+  
+//   input { accent-color: #4dabf7; transform: scale(1.2); cursor: pointer; }
+// }
+
+// // Inštrukcie a Tlačidlo
+// .instruction-box {
+//   @include flex(start, stretch, column);
+//   gap: 0.5rem;
+//   label { font-size: 0.9rem; color: #888; }
+//   textarea {
+//     background-color: #222; border: 1px solid #444; color: #fff; padding: 0.5rem;
+//     border-radius: 4px; resize: vertical; min-height: 80px;
+//     &:focus { outline: 1px solid #4dabf7; }
+//   }
+// }
+
+// .btn-primary {
+//   margin-top: auto; background-color: #eee; border: none; padding: 0.75rem;
+//   border-radius: 4px; font-weight: bold; cursor: pointer;
+//   &:hover { background-color: #fff; }
+//   &:disabled { opacity: 0.6; cursor: not-allowed; }
+// }
+
+// .error-msg { color: #ff6b6b; font-size: 0.85rem; margin-top: 0.5rem; }
+
+
+// // 3. HLAVNÝ OBSAH (Tu sa diala chyba)
+// .main-content {
+//   flex: 1;              // Zaber zvyšok šírky
+//   padding: 1.5rem;
+//   background-color: #111;
+  
+//   @include flex(start, stretch, column);
+//   gap: 1.5rem;
+
+//   // Desktop: Fixná výška = žiadny scroll celej sekcie
+//   @include mq(lg) {
+//     height: 100%;       
+//     overflow: hidden;   // Zakážeme scrollovanie kontajnera
+//   }
+
+//   // Mobil: Povoliť scroll
+//   @media (max-width: 991px) {
+//     overflow-y: auto;
+//   }
+
+//   header {
+//     flex-shrink: 0; // Hlavička sa nesmie zmenšovať
+//     h1 { margin: 0; font-size: 1.5rem; }
+//     p { color: #888; margin: 0.5rem 0 0 0; }
+//   }
+// }
+
+// // 4. GRID EDITOR (Jadro problému)
+// .editor-grid {
+//   // Mobil: Grid pod sebou (auto výška)
+//   display: grid;
+//   grid-template-columns: 1fr;
+//   gap: 1rem;
+
+//   // Desktop:
+//   @include mq(lg) {
+//     // 1. Vyplň zvyšok výšky (po hlavičke)
+//     flex: 1; 
+//     min-height: 0; // Dôležité pre flexbox scrolling!
+
+//     // 2. Rozloženie 2x2
+//     grid-template-columns: 1fr 1fr; 
+//     // 3. Dva riadky, každý zaberie presne 50% dostupného miesta
+//     grid-template-rows: 1fr 1fr; 
+//     gap: 1rem;
+//   }
+// }
+
+// // 5. KARTA
+// .card {
+//   background-color: #1e2228;
+//   border: 1px solid #333;
+//   border-radius: 8px;
+//   overflow: hidden;
+//   @include flex(start, stretch, column);
+
+//   // Mobil: Min výška aby to nebolo sploštené
+//   min-height: 300px;
+
+//   // Desktop: Karta musí mať 100% výšky svojej bunky v gride
+//   @include mq(lg) {
+//     height: 100%; 
+//     min-height: 0; // Umožní karte sa zmenšiť ak treba
+//   }
+
+//   .card-header {
+//     flex-shrink: 0; // Header karty má fixnú výšku
+//     padding: 0.75rem 1rem;
+//     border-bottom: 1px solid #333;
+//     font-weight: bold; font-size: 0.9rem;
+//     display: flex; justify-content: space-between; align-items: center;
+
+//     .header-actions { display: flex; gap: 0.5rem; }
+//     .icon-btn { background: transparent; border: none; color: #888; cursor: pointer; font-size: 1rem; &:hover { color: #fff; } }
+//   }
+
+//   // Textarea sa scrolluje VNÚTRI karty
+//   textarea, .preview-content {
+//     flex: 1;             // Vyplň zvyšok karty
+//     height: 100%;        // Roztiahni sa
+//     background: transparent; border: none; color: #ccc; padding: 1rem;
+//     resize: none;        // Zakáž manuálne zväčšovanie
+//     font-family: monospace;
+//     width: 100%;
+    
+//     overflow-y: auto;    // !!! TOTO JE KĽÚČ: Scrollbar bude TU, nie na stránke
+//   }
+// }
+
+// // Spodný box (Preview)
+// .preview-area {
+//   @include mq(lg) {
+//     grid-column: span 2; // Roztiahni na šírku
+//   }
+// }

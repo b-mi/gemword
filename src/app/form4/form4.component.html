@@ -1,0 +1,52 @@
+<div class="container">
+  
+  <div class="options">
+    <h2>Nastavenia</h2>
+    
+    <div class="settings-list">
+      @for (opt of switches; track opt.value) {
+        <label class="checkbox-item" [class.active]="opt.checked">
+          <input type="checkbox" [checked]="opt.checked" (change)="toggleSwitch(opt)">
+          <span>{{ opt.label }}</span>
+        </label>
+      }
+    </div>
+
+    <button class="btn-primary" (click)="handleGenerate()" [disabled]="isLoading()">
+      @if (isLoading()) { ⏳ Generujem... } @else { ✨ Vylepšiť Text }
+    </button>
+
+    @if (error()) { <div class="error-msg">{{ error() }}</div> }
+  </div>
+
+  <div class="toolbar">
+    <h1>Editor textu s AI Gemini</h1>
+  </div>
+
+  <div class="question">
+    <div class="box-header">
+      <span>Vstupný text</span>
+      <div class="actions">
+        <button (click)="handlePaste()" title="Prilepiť">📋</button>
+        <button (click)="handleClear()" title="Vymazať">🗑️</button>
+      </div>
+    </div>
+    <textarea 
+      [ngModel]="inputText()" 
+      (ngModelChange)="inputText.set($event)"
+      placeholder="Sem vložte text...">
+    </textarea>
+  </div>
+
+  <div class="answer">
+    <div class="box-header">
+      <span>Výsledok (Markdown)</span>
+      <div class="actions">
+        <button (click)="copyAsRawText()" title="Kopírovať Markdown">📄 Copy MD</button>
+        <button (click)="copyPreviewHtml()" title="Kopírovať HTML">🌐 Copy HTML</button>
+      </div>
+    </div>
+    <textarea readonly [value]="rawOutput()" placeholder="Tu sa objaví výsledok..."></textarea>
+  </div>
+
+</div>

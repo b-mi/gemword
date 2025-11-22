@@ -1,18 +1,52 @@
-:root { --gap: 12px; }
-html, body { height: 100%; margin: 0; }
+:root {
+  --gap: 12px;
+}
+
+* {
+  box-sizing: border-box; // Zabezpečí, že padding nezväčšuje šírku elementov
+}
+
+html,
+body {
+  height: 100%; // Aby stránka zaberala celú výšku
+  margin: 0; // Odstráni tie biele okraje
+  padding: 0;
+  background-color: #111; // Rovnaká tmavá farba ako tvoja aplikácia
+  color: #fff; // Základná farba textu
+  font-family: sans-serif; // Základný font
+}
+
 .app {
-  height: 100vh; display: grid;
-  grid-template-columns: 1fr 1fr; gap: var(--gap);
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
   padding: var(--gap);
 }
-.toolbar { grid-column: 1 / -1; display:flex; gap:8px; }
+
+.toolbar {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+}
+
 textarea.input {
-  width: 100%; height: calc(100vh - 80px);
+  width: 100%;
+  height: calc(100vh - 80px);
   font: 14px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, "Roboto Mono", monospace;
-  padding: 10px; box-sizing: border-box; resize: none;
+  padding: 10px;
+  box-sizing: border-box;
+  resize: none;
 }
+
 .preview {
-  height: calc(100vh - 80px); overflow: auto;
-  border: 1px solid #ddd; padding: 12px; background:#fff;
+  height: calc(100vh - 80px);
+  overflow: auto;
+  border: 1px solid #ddd;
+  padding: 12px;
+  background: #fff;
 }
-.preview p { margin: 0 0 10px; }
+
+.preview p {
+  margin: 0 0 10px;
+}

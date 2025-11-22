@@ -6,6 +6,8 @@ import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import TurndownService from 'turndown';
 import { AppService } from './app.service';
+import { Form3Component } from './form3/form3.component';
+import { Form4Component } from './form4/form4.component';
 
 
 interface SwitchOption {
@@ -15,66 +17,34 @@ interface SwitchOption {
   checked: boolean;
 }
 
-interface SwitchGroup {
-  name: string;
-  options: SwitchOption[];
-}
 
-const SWITCH_GROUPS: SwitchGroup[] = [
-  {
-    name: 'Tón',
-    options: [
-      { label: 'Profesionálny', value: 'professional', description: 'Použi neutrálny, formálny a profesionálny štýl.', checked: false },
-      { label: 'Priateľský', value: 'friendly', description: 'Použi priateľský, hovorový tón.', checked: false },
-      { label: 'Veselý', value: 'cheerful', description: 'Použi veselý a pozitívny tón, pridaj ľahkosť do textu.', checked: false },
-      { label: 'Odmeraný', value: 'measured', description: 'Použi strohý, faktický tón bez emócií.', checked: false },
-    ],
-  },
-  {
-    name: 'Dĺžka',
-    options: [
-      { label: 'Stručný', value: 'brief', description: 'Zjednoduš a skráť vety, vyjadruj sa čo najstručnejšie.', checked: false },
-      { label: 'Detailný', value: 'detailed', description: 'Rozviň text, doplň detaily a vysvetlenia.', checked: false },
-      { label: 'Zhrnutie', value: 'summary', description: 'Zhrň text do maximálne 3 viet.', checked: false },
-      { label: 'Bullet list', value: 'bullets', description: 'Rozdeľ obsah do odrážok pre lepšiu čitateľnosť.', checked: false },
-      { label: 'Odseky', value: 'paragraphs', description: 'Rozdeľ text do prehľadných odsekov.', checked: false },
-    ],
-  },
-  {
-    name: 'Typ',
-    options: [
-      { label: 'Text', value: 'text', description: 'Zachovaj pôvodný formát textu.', checked: false },
-      { label: 'Email', value: 'email', description: 'Premeň text na formálny e-mail vhodný na odoslanie.', checked: false },
-      { label: 'SMS', value: 'sms', description: 'Premeň text na krátku a údernú SMS správu.', checked: false },
-      { label: 'Kreatívny', value: 'creative', description: 'Preformuluj text do tvorivého a originálneho štýlu.', checked: false },
-    ],
-  }
-
-];
 
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Form4Component],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
 
-  handleCopy(arg0: any) {
+  readonly switches: SwitchOption[] = [
+    { label: 'Oprava preklepov', value: 'fix', description: 'Oprav preklepy a diakritiku.', checked: true },
+    { label: 'Profesionálny', value: 'professional', description: 'Použi neutrálny, formálny a profesionálny štýl.', checked: false },
+    { label: 'Priateľský', value: 'friendly', description: 'Použi priateľský, hovorový tón.', checked: true },
+    { label: 'Prelož do angličtiny', value: 'toen', description: 'Prelož do angličtiny.', checked: false },
+    { label: 'Prelož do slovenčiny', value: 'tosk', description: 'Prelož do slovenčiny.', checked: false },
 
-  }
+  ];
 
 
   service: AppService = inject(AppService);
   inputText = signal<string>('');
   rawOutput = signal<string>('');
   error = signal<string | null>(null);
-  customInstructions = signal<string>('');
   isLoading = signal<boolean>(false);
 
 
-  readonly switchGroups: SwitchGroup[] = SWITCH_GROUPS;
   private td = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
 
   previewHtml = computed<SafeHtml>(() => {
@@ -90,22 +60,21 @@ export class AppComponent implements OnInit {
       try {
         const data = JSON.parse(str);
         this.inputText.set(data.text);
-        this.customInstructions.set(data.instructions);
-        const smoods = data.moods as SwitchGroup[];
-        if (smoods) {
-          smoods.forEach(gTemp => {
-            gTemp.options.forEach(optTemp => {
-              if (optTemp.checked) {
+        // const smoods = data.moods as SwitchGroup[];
+        // if (smoods) {
+        //   smoods.forEach(gTemp => {
+        //     gTemp.options.forEach(optTemp => {
+        //       if (optTemp.checked) {
 
-                this.switchGroups.forEach(gx => {
-                  if (gx.name === gTemp.name) {
-                    this.onSelectionChange(gx, optTemp.value);
-                  }
-                });
-              }
-            })
-          });
-        }
+        //         this.switchGroups.forEach(gx => {
+        //           if (gx.name === gTemp.name) {
+        //             this.onSelectionChange(gx, optTemp.value);
+        //           }
+        //         });
+        //       }
+        //     })
+        //   });
+        // }
 
       } catch (error) {
         console.log(error);
@@ -120,7 +89,6 @@ export class AppComponent implements OnInit {
   handleClear(): void {
     this.inputText.set('');
     this.rawOutput.set('');
-    this.customInstructions.set('');
     this.store();
   }
 
@@ -154,17 +122,14 @@ export class AppComponent implements OnInit {
   }
 
   private store() {
-    const data = { text: this.inputText(), instructions: this.customInstructions(), moods: this.switchGroups };
+    const data = { text: this.inputText(), moods: this.switches };
     const str = JSON.stringify(data);
     localStorage.setItem('data', str);
   }
 
 
-  onSelectionChange(grp: SwitchGroup, optValue: string) {
-    console.log('selch', grp, optValue);
-    grp.options.forEach(o => {
-      o.checked = o.value === optValue;
-    });
+  onSelectionChange(optValue: string) {
+    // o.checked = o.value === optValue;
 
   }
 
@@ -173,18 +138,16 @@ export class AppComponent implements OnInit {
     if (!input || this.isLoading()) return;
 
     const mds: string[] = [];
-    this.switchGroups.forEach(g => {
-      g.options.forEach(o => {
-        if (o.checked) {
-          mds.push(o.description);
-        }
-      })
-    });
+    // this.switchGroups.forEach(g => {
+    //   g.options.forEach(o => {
+    //     if (o.checked) {
+    //       mds.push(o.description);
+    //     }
+    //   })
+    // });
 
-    const instruction = this.customInstructions()?.trim();
     const strs: String[] = [];
     if (mds) strs.push(mds.join('\n'));
-    if (instruction) strs.push(instruction);
     const all_istructions = strs.join('\n');
     const temp = 0.3;
     this.isLoading.set(true);
@@ -218,4 +181,10 @@ export class AppComponent implements OnInit {
       this.isLoading.set(false);
     }
   }
+
+  handleCopy(arg0: any) {
+
+  }
+
+
 }
