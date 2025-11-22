@@ -29,7 +29,7 @@ export class Form4Component {
   private td = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced' });
 
   switches: SwitchOption[] = [
-    { label: 'Oprava preklepov', value: 'fix', description: 'Oprav preklepy a diakritiku.', checked: true },
+    { label: 'Oprava preklepov', value: 'fix', description: 'Oprav preklepy a diakritiku. Odpoveď len opravený text bez akýchkoľvek ďalších textov.', checked: true },
     { label: 'Profesionálny', value: 'professional', description: 'Použi neutrálny, formálny a profesionálny štýl.', checked: false },
     { label: 'Priateľský', value: 'friendly', description: 'Použi priateľský, hovorový tón.', checked: true },
     { label: 'Prelož do angličtiny', value: 'toen', description: 'Prelož do angličtiny.', checked: false },

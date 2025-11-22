@@ -1,8 +1,6 @@
 <div class="container">
 
     <div class="options">
-        <h2><i class="bi bi-sliders"></i> Nastavenia</h2>
-
         <div class="settings-list">
             @for (opt of switches; track opt.value) {
             <label class="checkbox-item" [class.active]="opt.checked">
