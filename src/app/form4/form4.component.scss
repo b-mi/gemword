@@ -176,7 +176,9 @@ textarea {
 }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
-
+/* MOBIL */
+/* --- MOBIL (Úprava pre malé obrazovky) --- */
+@media (max-width: 800px) {
     .container {
         display: flex;
         flex-direction: column;
@@ -222,91 +224,4 @@ textarea {
     .answer {
         border-bottom: none;
     }
-/* --- MOBIL (Úprava pre malé obrazovky) --- */
-@media (max-width: 800px) {
-    .container {
-        display: flex;
-        flex-direction: column;
-        height: auto; 
-        overflow-y: auto;
-        overflow-x: hidden;
-        background-color: #1e1e1e; 
-        gap: 0;
-    }
-
-    /* 1. SKRYTIE TOOLBARU */
-    .toolbar { display: none; }
-
-    /* 2. SIDEBAR (OPTIONS) - ZAHUSTENIE */
-    .options {
-        min-height: auto;
-        flex: 0 0 auto;
-        border-bottom: 1px solid #333;
-        
-        /* Zmenšený padding */
-        padding: 0.5rem; 
-        
-        /* TRIK: Zobrazíme nastavenia a inštrukcie vedľa seba v dvoch stĺpcoch */
-        display: grid;
-        grid-template-columns: 1fr 1fr; 
-        gap: 0.5rem;
-        align-items: start;
-
-        /* Zmenšíme nadpis */
-        h2 { 
-            font-size: 0.85rem; 
-            margin-bottom: 0.2rem;
-            grid-column: 1 / -1; /* Nadpis cez celú šírku (ak ho tam necháš) */
-            /* display: none; <--- Odkomentuj, ak chceš skryť aj nadpis "Nastavenia" */
-        }
-    }
-
-    /* Úprava zoznamu checkboxov na mobile */
-    .settings-list {
-        gap: 0; /* Zrušíme medzery medzi položkami */
-    }
-
-    .checkbox-item {
-        padding: 0.2rem 0; /* Minimálny padding */
-        font-size: 0.85rem; /* Menšie písmo */
-        
-        input { transform: scale(0.9); } /* Menšie checkboxy */
-    }
-
-    /* Úprava textarea na mobile */
-    .extra-instruction {
-        gap: 0.2rem;
-        
-        label { font-size: 0.8rem; }
-        
-        textarea {
-            height: 60px; /* Menšia výška */
-            font-size: 0.85rem;
-            padding: 0.4rem;
-        }
-    }
-
-
-    /* 3. QUESTION & ANSWER */
-    .question, .answer {
-        min-height: 200px; 
-        height: 40vh;
-        overflow: hidden; 
-        border-bottom: 1px solid #333;
-        display: flex; 
-        flex-direction: column;
-        
-        /* Zmenšíme paddingy aj tu */
-        padding: 0; 
-    }
-    
-    /* Zmenšenie hlavičiek boxov */
-    .box-header {
-        padding: 0.3rem 0.5rem;
-        min-height: 40px;
-        
-        .title { font-size: 0.8rem; }
-    }
-
-    .answer { border-bottom: none; }
 }
