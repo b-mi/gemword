@@ -1,52 +1,68 @@
 <div class="container">
-  
-  <div class="options">
-    <h2>Nastavenia</h2>
-    
-    <div class="settings-list">
-      @for (opt of switches; track opt.value) {
-        <label class="checkbox-item" [class.active]="opt.checked">
-          <input type="checkbox" [checked]="opt.checked" (change)="toggleSwitch(opt)">
-          <span>{{ opt.label }}</span>
-        </label>
-      }
+
+    <div class="options">
+        <h2><i class="bi bi-sliders"></i> Nastavenia</h2>
+
+        <div class="settings-list">
+            @for (opt of switches; track opt.value) {
+            <label class="checkbox-item" [class.active]="opt.checked">
+                <input type="checkbox" [checked]="opt.checked" (change)="toggleSwitch(opt)">
+                <span>{{ opt.label }}</span>
+            </label>
+            }
+        </div>
+
     </div>
 
-    <button class="btn-primary" (click)="handleGenerate()" [disabled]="isLoading()">
-      @if (isLoading()) { ⏳ Generujem... } @else { ✨ Vylepšiť Text }
-    </button>
-
-    @if (error()) { <div class="error-msg">{{ error() }}</div> }
-  </div>
-
-  <div class="toolbar">
-    <h1>Editor textu s AI Gemini</h1>
-  </div>
-
-  <div class="question">
-    <div class="box-header">
-      <span>Vstupný text</span>
-      <div class="actions">
-        <button (click)="handlePaste()" title="Prilepiť">📋</button>
-        <button (click)="handleClear()" title="Vymazať">🗑️</button>
-      </div>
+    <div class="toolbar">
+        <h3> Editor textu s AI Gemini </h3>
     </div>
-    <textarea 
-      [ngModel]="inputText()" 
-      (ngModelChange)="inputText.set($event)"
-      placeholder="Sem vložte text...">
+
+    <div class="question">
+        <div class="box-header">
+            <span class="title"><i class="bi bi-keyboard"></i> Vstup</span>
+
+            <div class="actions">
+                <button class="btn-action primary" (click)="handleGenerate()" [disabled]="isLoading()"
+                    title="Spustiť AI úpravu">
+                    @if (isLoading()) {
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    } @else {
+                    <i class="bi bi-stars"></i> Vylepšiť
+                    }
+                </button>
+
+                <div class="divider"></div>
+
+                <button class="btn-icon" (click)="handlePaste()" title="Prilepiť zo schránky">
+                    <i class="bi bi-clipboard-plus"></i>
+                </button>
+                <button class="btn-icon danger" (click)="handleClear()" title="Vymazať všetko">
+                    <i class="bi bi-trash3"></i>
+                </button>
+            </div>
+        </div>
+
+        <textarea [ngModel]="inputText()" (ngModelChange)="inputText.set($event)"
+            placeholder="Sem vložte text na úpravu...">
     </textarea>
-  </div>
-
-  <div class="answer">
-    <div class="box-header">
-      <span>Výsledok (Markdown)</span>
-      <div class="actions">
-        <button (click)="copyAsRawText()" title="Kopírovať Markdown">📄 Copy MD</button>
-        <button (click)="copyPreviewHtml()" title="Kopírovať HTML">🌐 Copy HTML</button>
-      </div>
     </div>
-    <textarea readonly [value]="rawOutput()" placeholder="Tu sa objaví výsledok..."></textarea>
-  </div>
+
+    <div class="answer">
+        <div class="box-header">
+            <span class="title"><i class="bi bi-markdown"></i> Výsledok</span>
+
+            <div class="actions">
+                <button class="btn-icon" (click)="copyAsRawText()" title="Kopírovať Markdown">
+                    <i class="bi bi-clipboard-check"></i>
+                </button>
+                <button class="btn-icon" (click)="copyPreviewHtml()" title="Kopírovať HTML kód">
+                    <i class="bi bi-filetype-html"></i>
+                </button>
+            </div>
+        </div>
+
+        <textarea readonly [value]="rawOutput()" placeholder="Tu sa objaví výsledok..."></textarea>
+    </div>
 
 </div>
