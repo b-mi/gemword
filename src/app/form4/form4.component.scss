@@ -170,50 +170,65 @@ textarea {
 
 /* MOBIL */
 /* --- MOBIL (Úprava pre malé obrazovky) --- */
+/* --- MOBIL (Bezpečný režim) --- */
 @media (max-width: 800px) {
+
+    /* 1. Prepneme Grid na Flex (pod seba) */
     .container {
         display: flex;
         flex-direction: column;
-        /* Na mobile vypneme fixnú výšku 100vh, aby sa dalo rolovať stránkou,
-           keď vyskočí klávesnica */
-        height: auto; 
-        overflow-y: auto; /* Povolíme scroll celého kontajnera */
-        overflow-x: hidden;
-        background-color: #1e1e1e; 
+        
+        /* DÔLEŽITÉ: Ostávame pri 100vh aj na mobile! 
+           Tým zabránime "rozbitiu" layoutu a scrolovaniu celej stránky. */
+        height: 100vh; 
+        overflow: hidden; 
         gap: 0;
     }
 
-    /* 1. SKRYTIE TOOLBARU (Textu) */
-    /* Ušetríme cca 50-60px miesta tým, že ho úplne schováme */
+    /* 2. Skryjeme Toolbar (Nadpis) */
     .toolbar {
-        display: none;
+        display: none !important; /* Force skrytie */
     }
 
-    /* 2. SIDEBAR (OPTIONS) */
-    /* Necháme ho zabrať len toľko miesta, koľko potrebujú checkboxy (auto) */
+    /* 3. Sidebar (Options) - Minimalistický */
     .options {
-        min-height: auto; /* Zrušíme limit 300px */
-        flex: 0 0 auto;   /* Nenaťahovať, len podľa obsahu */
-        border-bottom: 1px solid #333;
-        padding: 1rem;
+        flex: 0 0 auto; /* Nenatťahovať */
+        padding: 0.5rem;
         gap: 0.5rem;
-    }
-
-    /* 3. QUESTION & ANSWER (Zmenšenie výšky) */
-    .question, .answer {
-        /* Zmenšíme fixnú výšku z 300px na 200px (alebo podľa potreby) */
-        min-height: 200px; 
-        height: 40vh; /* Nastavíme relatívnu výšku (cca 40% obrazovky) */
-        overflow: hidden; /* Scroll bude vnútri textarea */
         border-bottom: 1px solid #333;
         
-        /* Flex pre roztiahnutie textarea vnútri */
-        display: flex; 
-        flex-direction: column;
+        /* Zobrazíme checkboxy a inštrukcie vedľa seba */
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        
+        /* Skryjeme veľký nadpis "Nastavenia" v sidebare */
+        h2 { display: none; }
     }
     
-    /* Na mobile zrušíme border-bottom pre posledný prvok */
-    .answer {
-        border-bottom: none;
+    /* Úprava prvkov v sidebare pre úsporu miesta */
+    .settings-list { gap: 0; }
+    .checkbox-item { padding: 0.1rem 0; font-size: 0.8rem; }
+    .extra-instruction textarea { height: 50px; font-size: 0.8rem; }
+
+    /* 4. EDITOR A VÝSLEDOK (To podstatné) */
+    .question, .answer {
+        /* Každý panel dostane polovicu zvyšného miesta */
+        flex: 1; 
+        
+        /* Reset min-height, aby ich Flexbox mohol stlačiť */
+        min-height: 0; 
+        
+        border-bottom: 1px solid #333;
+        padding: 0;
+    }
+
+    /* Posledný element nepotrebuje čiaru */
+    .answer { border-bottom: none; }
+    
+    /* Zmenšíme hlavičky boxov na mobile */
+    .box-header {
+        padding: 0.2rem 0.5rem;
+        min-height: 35px;
+        .title { font-size: 0.8rem; }
     }
 }
