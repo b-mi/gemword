@@ -81,7 +81,7 @@ export class Form4Component {
   rawOutput = signal<string>('');
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
-  viewMode = signal<'raw' | 'preview' | 'html'>('raw');
+  viewMode = signal<'raw' | 'preview' | 'html'>('preview');
 
   // Preview HTML (ak by si ho chcel v budúcnosti zobraziť)
   previewHtml = computed<SafeHtml>(() => {
@@ -180,18 +180,6 @@ export class Form4Component {
     await navigator.clipboard.writeText(this.rawOutput() || '');
   }
   
-  // Túto metódu môžeš použiť pre tlačidlo Copy HTML
-  async copyPreviewHtml() {
-     // Získame HTML string z preview (treba obísť SafeHtml wrapper pre copy)
-     const raw = this.rawOutput();
-    //  if(!raw) return;
-     const parsed = marked.parse(raw, { async: false }) as string;
-     const type = 'text/html';
-     const blob = new Blob([parsed], { type });
-     const data = [new ClipboardItem({ [type]: blob })];
-     await navigator.clipboard.write(data);
-  }
-
   private storeState() {
     const state = {
       text: this.inputText(),

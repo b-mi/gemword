@@ -53,16 +53,13 @@
         <div class="box-header">
             <div class="view-switcher">
                 <button (click)="viewMode.set('raw')" [class.active]="viewMode() === 'raw'">Text</button>
-                <button (click)="viewMode.set('preview')" [class.active]="viewMode() === 'preview'">Náhľad</button>
+                <button (click)="viewMode.set('preview')" [class.active]="viewMode() === 'preview'">Markdown</button>
                 <button (click)="viewMode.set('html')" [class.active]="viewMode() === 'html'">HTML</button>
             </div>
 
             <div class="actions">
                 <button class="btn-icon" (click)="copyAsRawText()" title="Kopírovať Markdown">
                     <i class="bi bi-clipboard-check"></i>
-                </button>
-                <button class="btn-icon" (click)="copyPreviewHtml()" title="Kopírovať HTML kód">
-                    <i class="bi bi-filetype-html"></i>
                 </button>
                 <button class="btn-icon" (click)="moveResultToInput()" title="Presunúť výsledok hore na vstup">
                     <i class="bi bi-arrow-up-circle"></i>
