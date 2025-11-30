@@ -25,6 +25,9 @@ export const appConfig: ApplicationConfig = {
             console.log(`url: ${appService.url}`);
            }))
       );
-    })
+    }), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          })
         ]
 };
