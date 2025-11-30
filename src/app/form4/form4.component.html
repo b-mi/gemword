@@ -4,7 +4,8 @@
         <div class="settings-list">
             @for (opt of switches; track opt.value) {
             <label class="checkbox-item" [class.active]="opt.checked">
-                <input type="checkbox" [checked]="opt.checked" (change)="toggleSwitch(opt)">
+                <input type="checkbox" [checked]="opt.checked" (change)="toggleSwitch(opt)" />
+                <span class="switch"></span>
                 <span>{{ opt.label }}</span>
             </label>
             }
