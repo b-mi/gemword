@@ -5,8 +5,8 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import TurndownService from 'turndown';
-// Uisti sa, že cesta k servicu je správna
-import { AppService } from '../app.service'; 
+import { AppService } from '../app.service';
+import { version } from '../../../package.json';
 
 interface SwitchOption {
   label: string;
@@ -26,6 +26,7 @@ export class Form4Component {
   // Signál pre dynamické riadenie výšky grid riadkov
   gridRows = signal('50px 1fr 3px 1fr');
   private isResizing = false;
+  protected readonly appVersion = version;
 
   @HostListener('window:mousemove', ['$event'])
   onResizing(event: MouseEvent) {
@@ -123,11 +124,11 @@ export class Form4Component {
     try {
       const apiBaseUrl = isDevMode() ? '' : this.service.url;
       const apiUrl = `${apiBaseUrl}/api/correct`;
-      
-      const body = JSON.stringify({ 
-        text: input, 
-        instruction: instructionsArr.join('\n'), 
-        temperature: 0.3 
+
+      const body = JSON.stringify({
+        text: input,
+        instruction: instructionsArr.join('\n'),
+        temperature: 0.3
       });
 
       const resp = await fetch(apiUrl, {
@@ -180,7 +181,7 @@ export class Form4Component {
   async copyAsRawText() {
     await navigator.clipboard.writeText(this.rawOutput() || '');
   }
-  
+
   private storeState() {
     const state = {
       text: this.inputText(),
