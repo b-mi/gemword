@@ -50,7 +50,11 @@
 }
 
 .question, .answer {
-    background-color: #1e1e1e;
+    background-color: #1e1e1e; 
+    /* Pridané pre správne zobrazenie obsahu */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .resizer-vertical {
@@ -87,6 +91,40 @@
         align-items: center;
         gap: 0.5rem;
     }
+}
+
+/* Prepínač zobrazenia (Text / Náhľad / HTML) */
+.view-switcher {
+    display: flex;
+    background-color: #333;
+    border-radius: 6px;
+    padding: 2px;
+
+    button {
+        background: transparent;
+        border: none;
+        color: #aaa;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+
+        &.active {
+            background-color: #444;
+            color: #fff;
+        }
+    }
+}
+
+/* Kontajner pre výstupný obsah */
+.output-content {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #1e1e1e;
 }
 
 /* Hlavné tlačidlo (Vylepšiť Text) */
@@ -131,6 +169,16 @@
             height: 18px;
     background-color: #444;
     margin: 0 4px;
+}
+
+/* Panel s náhľadom renderovaného HTML */
+.preview-pane {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    line-height: 1.6;
+    color: #e0e0e0;
+    font-family: sans-serif;
 }
 
 /* Textarea */

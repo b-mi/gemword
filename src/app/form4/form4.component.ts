@@ -81,6 +81,7 @@ export class Form4Component {
   rawOutput = signal<string>('');
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
+  viewMode = signal<'raw' | 'preview' | 'html'>('raw');
 
   // Preview HTML (ak by si ho chcel v budúcnosti zobraziť)
   previewHtml = computed<SafeHtml>(() => {
@@ -89,6 +90,13 @@ export class Form4Component {
     const parsed = marked.parse(raw, { async: false }) as string;
     const clean = DOMPurify.sanitize(parsed, { USE_PROFILES: { html: true } });
     return this.sanitizer.bypassSecurityTrustHtml(clean);
+  });
+
+  // Surový HTML kód ako text
+  htmlCode = computed<string>(() => {
+    const raw = this.rawOutput();
+    if (!raw) return '';
+    return marked.parse(raw, { async: false }) as string;
   });
 
   constructor() {
