@@ -2,16 +2,17 @@
 /* 1. GRID LAYOUT (Nemenil som - ostáva tvoj funkčný kód)    */
 /* --------------------------------------------------------- */
 .container {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    grid-template-rows: 50px 1fr 1fr;
+    display: grid; 
+    grid-template-columns: 300px 1fr; 
+    // Výška riadkov je teraz riadená dynamicky z TS
     gap: 1px; 
     background-color: #333333; 
     grid-auto-flow: row;
     grid-template-areas:
         "options toolbar"
         "options question"
-        "options answer";
+        "options resizer"
+        "options answer"; 
     height: 100vh;
     width: 100%;
     overflow: hidden;
@@ -21,7 +22,7 @@
 
 /* Spoločné nastavenie pre oblasti */
 .options, .question, .answer {
-    overflow: hidden; 
+    overflow: hidden;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -50,6 +51,13 @@
 
 .question, .answer {
     background-color: #1e1e1e;
+}
+
+.resizer-vertical {
+    grid-area: resizer;
+    background-color: #333;
+    cursor: ns-resize; /* Kurzov pre vertikálnu zmenu veľkosti */
+    height: 3px;
 }
 
 /* --------------------------------------------------------- */

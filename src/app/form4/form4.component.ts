@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, isDevMode } from '@angular/core';
+import { Component, signal, computed, inject, isDevMode, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -23,6 +23,38 @@ interface SwitchOption {
   styleUrl: './form4.component.scss'
 })
 export class Form4Component {
+  // Signál pre dynamické riadenie výšky grid riadkov
+  gridRows = signal('50px 1fr 3px 1fr');
+  private isResizing = false;
+
+  @HostListener('window:mousemove', ['$event'])
+  onResizing(event: MouseEvent) {
+    if (!this.isResizing) return;
+    // Zastavíme predvolené správanie (napr. označovanie textu)
+    event.preventDefault();
+
+    // Celková výška kontajnera mínus výška toolbaru a resizera
+    const totalHeight = window.innerHeight - 50 - 3;
+    // Y pozícia myši relatívne k vrchu okna
+    const mouseY = event.clientY;
+    // Výška horného panelu (question)
+    const topPanelHeight = mouseY - 50;
+
+    // Aktualizujeme grid-template-rows
+    this.gridRows.set(`50px ${topPanelHeight}px 3px 1fr`);
+  }
+
+  @HostListener('window:mouseup')
+  onResizeEnd() {
+    this.isResizing = false;
+  }
+
+  onResizeStart(event: MouseEvent) {
+    this.isResizing = true;
+    // Zastavíme predvolené správanie, aby sa neoznačoval text pri ťahaní
+    event.preventDefault();
+  }
+
   /**
    * Presunie vygenerovaný text z výstupu späť na vstup pre ďalšie úpravy.
    */
@@ -144,7 +176,7 @@ export class Form4Component {
   async copyPreviewHtml() {
      // Získame HTML string z preview (treba obísť SafeHtml wrapper pre copy)
      const raw = this.rawOutput();
-     if(!raw) return;
+    //  if(!raw) return;
      const parsed = marked.parse(raw, { async: false }) as string;
      const type = 'text/html';
      const blob = new Blob([parsed], { type });

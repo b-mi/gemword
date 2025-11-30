@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" [style.gridTemplateRows]="gridRows()">
 
     <div class="options">
         <div class="settings-list">
@@ -46,6 +46,8 @@
             placeholder="Sem vložte text na úpravu...">
     </textarea>
     </div>
+
+    <div class="resizer-vertical" (mousedown)="onResizeStart($event)"></div>
 
     <div class="answer">
         <div class="box-header">
