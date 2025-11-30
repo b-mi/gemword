@@ -47,6 +47,7 @@ export class Form4Component {
   @HostListener('window:mouseup')
   onResizeEnd() {
     this.isResizing = false;
+    this.storeState(); // Uložíme stav po dokončení zmeny veľkosti
   }
 
   onResizeStart(event: MouseEvent) {
@@ -183,7 +184,8 @@ export class Form4Component {
   private storeState() {
     const state = {
       text: this.inputText(),
-      switches: this.switches.map(s => ({ value: s.value, checked: s.checked }))
+      switches: this.switches.map(s => ({ value: s.value, checked: s.checked })),
+      gridRows: this.gridRows()
     };
     localStorage.setItem('data_v4', JSON.stringify(state));
   }
@@ -194,6 +196,7 @@ export class Form4Component {
       try {
         const data = JSON.parse(str);
         if (data.text) this.inputText.set(data.text);
+        if (data.gridRows) this.gridRows.set(data.gridRows);
         if (Array.isArray(data.switches)) {
           data.switches.forEach((saved: any) => {
             const existing = this.switches.find(s => s.value === saved.value);
