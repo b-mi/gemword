@@ -322,3 +322,11 @@ textarea {
         .title { font-size: 0.8rem; }
     }
 }
+
+@media (max-width: 800px) {
+    .settings-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-column: 1 / -1; /* Roztiahnuť cez všetky stĺpce v .options */
+    }
+}
