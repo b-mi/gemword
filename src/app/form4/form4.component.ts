@@ -23,6 +23,14 @@ interface SwitchOption {
   styleUrl: './form4.component.scss'
 })
 export class Form4Component {
+  /**
+   * Presunie vygenerovaný text z výstupu späť na vstup pre ďalšie úpravy.
+   */
+  moveResultToInput(): void {
+    this.inputText.set(this.rawOutput());
+    this.rawOutput.set('');
+    this.storeState();
+  }
 
   private service = inject(AppService);
   private sanitizer = inject(DomSanitizer);
@@ -34,6 +42,7 @@ export class Form4Component {
     { label: 'Priateľský', value: 'friendly', description: 'Použi priateľský, hovorový tón.', checked: true },
     { label: 'Prelož do angličtiny', value: 'toen', description: 'Prelož do angličtiny.', checked: false },
     { label: 'Prelož do slovenčiny', value: 'tosk', description: 'Prelož do slovenčiny.', checked: false },
+    { label: 'Odpoveď na otázku', value: 'q&a', description: 'Si expert na oblasť ktorej sa otázka týka. Analyzuj krok za krokom, overuje a daj odpoveď v slovenčine.', checked: false },
   ];
 
   inputText = signal<string>('');
