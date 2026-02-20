@@ -76,7 +76,7 @@ export class Form4Component {
     { label: 'Priateľský', value: 'friendly', description: 'Použi priateľský, hovorový tón.', checked: true },
     { label: 'Prelož do angličtiny', value: 'toen', description: 'Prelož do angličtiny.', checked: false },
     { label: 'Prelož do slovenčiny', value: 'tosk', description: 'Prelož do slovenčiny.', checked: false },
-    { label: 'Odpoveď na otázku', value: 'q&a', description: 'Poskytni zrozumiteľnú odpoveď, analyzuj krok za krokom, overuje a daj odpoveď v slovenčine.', checked: false },
+    { label: 'Odpoveď na otázku', value: 'q&a', description: 'Poskytni zrozumiteľnú a správnu odpoveď v slovenčine.', checked: false },
   ];
 
   inputText = signal<string>('');
