@@ -1,7 +1,7 @@
 @echo off
 call npm version patch
 call ng build -c production --base-href .
-del gemword\dist\gemword\browser\config.json 
+del dist\gemword\browser\config.json 
 echo key to copy to ISP
 pause
 rclone sync ./dist/gemword/browser arxa:/subdoms/gemword/wwwroot/ --progress --exclude "media/**" --exclude "config.json" --ignore-times --inplace
